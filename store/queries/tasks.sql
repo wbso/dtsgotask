@@ -18,3 +18,18 @@ SET detail = @detail,
     updated_at = CURRENT_TIMESTAMP
 WHERE id = @id
 RETURNING *;
+-- name: DeleteTask :exec
+DELETE FROM tasks
+WHERE id = @id;
+-- name: SetTaskDone :one
+UPDATE tasks
+SET is_done = true,
+    updated_at = CURRENT_TIMESTAMP
+WHERE id = @id
+RETURNING *;
+-- name: SetTaskUndone :one
+UPDATE tasks
+SET is_done = false,
+    updated_at = CURRENT_TIMESTAMP
+WHERE id = @id
+RETURNING *;

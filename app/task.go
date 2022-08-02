@@ -108,26 +108,11 @@ type CompleteTaskResponse struct {
 	ID uuid.UUID `json:"id"`
 }
 
-func (app *App) CompleteTask(ctx context.Context, id uuid.UUID) CompleteTaskResponse {
-	return CompleteTaskResponse{ID: id}
-}
-
-func taskStoreListToTaskList(taskStores []store.Task) []Task {
-	tasks := make([]Task, len(taskStores))
-	for i, taskStore := range taskStores {
-		tasks[i] = taskStoreToTask(taskStore)
+func (app *App) CompleteTask(ctx context.Context, id uuid.UUID) (Task, error) {
+	var output Task
+	taskStore, err := app.Repo.SetTaskDone(ctx, id)
+	if err != nil {
+		return output, err
 	}
-	return tasks
-}
-
-func taskStoreToTask(taskStore store.Task) Task {
-	return Task{
-		ID:        taskStore.ID,
-		Detail:    taskStore.Detail,
-		IsDone:    taskStore.IsDone,
-		Assignee:  taskStore.Assignee,
-		Deadline:  taskStore.Deadline,
-		CreatedAt: taskStore.CreatedAt,
-		UpdatedAt: taskStore.UpdatedAt,
-	}
+	return taskStoreToTask(taskStore), nil
 }

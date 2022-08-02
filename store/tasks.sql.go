@@ -45,6 +45,16 @@ func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, e
 	return i, err
 }
 
+const deleteTask = `-- name: DeleteTask :exec
+DELETE FROM tasks
+WHERE id = $1
+`
+
+func (q *Queries) DeleteTask(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteTask, id)
+	return err
+}
+
 const getTaskById = `-- name: GetTaskById :one
 SELECT id, detail, is_done, assignee, deadline, created_at, updated_at
 FROM tasks
@@ -98,6 +108,29 @@ func (q *Queries) ListTasks(ctx context.Context) ([]Task, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const setTaskDone = `-- name: SetTaskDone :one
+UPDATE tasks
+SET is_done = true,
+    updated_at = CURRENT_TIMESTAMP
+WHERE id = $1
+RETURNING id, detail, is_done, assignee, deadline, created_at, updated_at
+`
+
+func (q *Queries) SetTaskDone(ctx context.Context, id uuid.UUID) (Task, error) {
+	row := q.db.QueryRow(ctx, setTaskDone, id)
+	var i Task
+	err := row.Scan(
+		&i.ID,
+		&i.Detail,
+		&i.IsDone,
+		&i.Assignee,
+		&i.Deadline,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const updateTask = `-- name: UpdateTask :one
