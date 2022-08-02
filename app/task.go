@@ -37,28 +37,28 @@ func (app *App) ListTasks(ctx context.Context, input ListTasksRequest) ListTasks
 
 // Create a new task
 type CreateTaskRequest struct {
-	Detail   string    `json:"detail"`
-	Assignee string    `json:"assignee"`
-	Deadline time.Time `json:"deadline"`
+	Detail   string `json:"detail"`
+	Assignee string `json:"assignee"`
+	Deadline string `json:"deadline"`
 }
 
-type CreateTaskResponse struct {
-	ID uuid.UUID `json:"id"`
-}
+func (app *App) CreateTask(ctx context.Context, input CreateTaskRequest) (Task, error) {
+	var output Task
 
-func (app *App) CreateTask(ctx context.Context, input CreateTaskRequest) (CreateTaskResponse, error) {
-	var output CreateTaskResponse
+	deadline, err := parseYMDToTime(input.Deadline)
+	if err != nil {
+		return output, err
+	}
 	taskStore, err := app.Repo.CreateTask(ctx, store.CreateTaskParams{
 		ID:       uuid.New(),
 		Detail:   input.Detail,
 		Assignee: input.Assignee,
-		Deadline: input.Deadline,
+		Deadline: deadline,
 	})
 	if err != nil {
 		return output, err
 	}
-	output.ID = taskStore.ID
-	return output, nil
+	return taskStoreToTask(taskStore), nil
 }
 
 // Get a task by id
