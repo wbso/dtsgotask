@@ -108,9 +108,18 @@ type CompleteTaskResponse struct {
 	ID uuid.UUID `json:"id"`
 }
 
-func (app *App) CompleteTask(ctx context.Context, id uuid.UUID) (Task, error) {
+func (app *App) SetTaskDone(ctx context.Context, id uuid.UUID) (Task, error) {
 	var output Task
 	taskStore, err := app.Repo.SetTaskDone(ctx, id)
+	if err != nil {
+		return output, err
+	}
+	return taskStoreToTask(taskStore), nil
+}
+
+func (app *App) SetTaskUndone(ctx context.Context, id uuid.UUID) (Task, error) {
+	var output Task
+	taskStore, err := app.Repo.SetTaskUndone(ctx, id)
 	if err != nil {
 		return output, err
 	}

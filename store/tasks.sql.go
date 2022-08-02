@@ -133,6 +133,29 @@ func (q *Queries) SetTaskDone(ctx context.Context, id uuid.UUID) (Task, error) {
 	return i, err
 }
 
+const setTaskUndone = `-- name: SetTaskUndone :one
+UPDATE tasks
+SET is_done = false,
+    updated_at = CURRENT_TIMESTAMP
+WHERE id = $1
+RETURNING id, detail, is_done, assignee, deadline, created_at, updated_at
+`
+
+func (q *Queries) SetTaskUndone(ctx context.Context, id uuid.UUID) (Task, error) {
+	row := q.db.QueryRow(ctx, setTaskUndone, id)
+	var i Task
+	err := row.Scan(
+		&i.ID,
+		&i.Detail,
+		&i.IsDone,
+		&i.Assignee,
+		&i.Deadline,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const updateTask = `-- name: UpdateTask :one
 UPDATE tasks
 SET detail = $1,

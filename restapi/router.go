@@ -90,7 +90,20 @@ func (s *Server) Router() http.Handler {
 			respondJson(w, r, http.StatusBadRequest, err)
 			return
 		}
-		res, err := s.App.CompleteTask(r.Context(), id)
+		res, err := s.App.SetTaskDone(r.Context(), id)
+		if err != nil {
+			respondJson(w, r, http.StatusBadRequest, err)
+			return
+		}
+		respondJson(w, r, http.StatusOK, res)
+	})
+	r.Put("/tasks/{id}/undone", func(w http.ResponseWriter, r *http.Request) {
+		id, err := uuid.Parse(chi.URLParam(r, "id"))
+		if err != nil {
+			respondJson(w, r, http.StatusBadRequest, err)
+			return
+		}
+		res, err := s.App.SetTaskUndone(r.Context(), id)
 		if err != nil {
 			respondJson(w, r, http.StatusBadRequest, err)
 			return
