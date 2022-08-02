@@ -62,22 +62,36 @@ func (app *App) CreateTask(ctx context.Context, input CreateTaskRequest) (Task, 
 }
 
 // Get a task by id
-func (app *App) GetTask(ctx context.Context, id uuid.UUID) Task {
-	return Task{}
+func (app *App) GetTask(ctx context.Context, id uuid.UUID) (Task, error) {
+	taskStore, err := app.Repo.GetTaskById(ctx, id)
+	if err != nil {
+		return Task{}, err
+	}
+	return taskStoreToTask(taskStore), nil
 }
 
 // Update a task by id
 type UpdateTaskRequest struct {
-	Detail   string    `json:"description"`
-	Asignee  string    `json:"asignee"`
-	Deadline time.Time `json:"deadline"`
-}
-type UpdateTaskResponse struct {
-	ID uuid.UUID `json:"id"`
+	Detail   string `json:"detail"`
+	Assignee string `json:"assignee"`
+	Deadline string `json:"deadline"`
 }
 
-func (app *App) UpdateTask(ctx context.Context, id uuid.UUID, input UpdateTaskRequest) UpdateTaskResponse {
-	return UpdateTaskResponse{ID: id}
+func (app *App) UpdateTask(ctx context.Context, id uuid.UUID, input UpdateTaskRequest) (Task, error) {
+	deadline, err := parseYMDToTime(input.Deadline)
+	if err != nil {
+		return Task{}, err
+	}
+	task, err := app.Repo.UpdateTask(ctx, store.UpdateTaskParams{
+		ID:       id,
+		Detail:   input.Detail,
+		Assignee: input.Assignee,
+		Deadline: deadline,
+	})
+	if err != nil {
+		return Task{}, err
+	}
+	return Task(task), nil
 }
 
 // Delete a task by id

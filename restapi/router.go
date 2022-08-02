@@ -47,7 +47,11 @@ func (s *Server) Router() http.Handler {
 			respondJson(w, r, http.StatusBadRequest, err)
 			return
 		}
-		res := s.App.GetTask(r.Context(), id)
+		res, err := s.App.GetTask(r.Context(), id)
+		if err != nil {
+			respondJson(w, r, http.StatusBadRequest, err)
+			return
+		}
 		respondJson(w, r, http.StatusOK, res)
 	})
 
@@ -62,7 +66,11 @@ func (s *Server) Router() http.Handler {
 			respondJson(w, r, http.StatusBadRequest, err)
 			return
 		}
-		res := s.App.UpdateTask(r.Context(), id, input)
+		res, err := s.App.UpdateTask(r.Context(), id, input)
+		if err != nil {
+			respondJson(w, r, http.StatusBadRequest, err)
+			return
+		}
 		respondJson(w, r, http.StatusOK, res)
 	})
 

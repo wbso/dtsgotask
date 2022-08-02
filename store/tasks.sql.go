@@ -45,6 +45,27 @@ func (q *Queries) CreateTask(ctx context.Context, arg CreateTaskParams) (Task, e
 	return i, err
 }
 
+const getTaskById = `-- name: GetTaskById :one
+SELECT id, detail, is_done, assignee, deadline, created_at, updated_at
+FROM tasks
+WHERE id = $1
+`
+
+func (q *Queries) GetTaskById(ctx context.Context, id uuid.UUID) (Task, error) {
+	row := q.db.QueryRow(ctx, getTaskById, id)
+	var i Task
+	err := row.Scan(
+		&i.ID,
+		&i.Detail,
+		&i.IsDone,
+		&i.Assignee,
+		&i.Deadline,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const listTasks = `-- name: ListTasks :many
 SELECT id, detail, is_done, assignee, deadline, created_at, updated_at
 FROM tasks
@@ -77,4 +98,41 @@ func (q *Queries) ListTasks(ctx context.Context) ([]Task, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateTask = `-- name: UpdateTask :one
+UPDATE tasks
+SET detail = $1,
+    assignee = $2,
+    deadline = $3,
+    updated_at = CURRENT_TIMESTAMP
+WHERE id = $4
+RETURNING id, detail, is_done, assignee, deadline, created_at, updated_at
+`
+
+type UpdateTaskParams struct {
+	Detail   string    `db:"detail"`
+	Assignee string    `db:"assignee"`
+	Deadline time.Time `db:"deadline"`
+	ID       uuid.UUID `db:"id"`
+}
+
+func (q *Queries) UpdateTask(ctx context.Context, arg UpdateTaskParams) (Task, error) {
+	row := q.db.QueryRow(ctx, updateTask,
+		arg.Detail,
+		arg.Assignee,
+		arg.Deadline,
+		arg.ID,
+	)
+	var i Task
+	err := row.Scan(
+		&i.ID,
+		&i.Detail,
+		&i.IsDone,
+		&i.Assignee,
+		&i.Deadline,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
