@@ -1,16 +1,18 @@
 <script lang="ts">
 	import Header from '$lib/header/Header.svelte';
+	import Notification from '$lib/Notification.svelte';
+
 	import '../app.css';
 </script>
 
 <Header />
-
+<Notification />
 <main>
 	<slot />
 </main>
 
 <footer>
-	<p>visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit</p>
+	<p>Emanuel Tegar Wibisono @ Yogyakarta 2022</p>
 </footer>
 
 <style>
