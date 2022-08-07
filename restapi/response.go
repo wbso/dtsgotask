@@ -6,8 +6,16 @@ import (
 )
 
 type response struct {
+	Error   string      `json:"error,omitempty"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
+}
+
+func respondError(w http.ResponseWriter, r *http.Request, status int, err error) {
+	respondJson(w, r, status, response{
+		Error:   err.Error(),
+		Message: http.StatusText(status),
+	})
 }
 
 func respondJson(w http.ResponseWriter, r *http.Request, status int, payload interface{}) {

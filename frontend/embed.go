@@ -7,12 +7,12 @@ import (
 	"net/http"
 )
 
-//go:embed all:build2
+//go:embed all:build
 var Static embed.FS
 
 // Dist embed compiled JS in go binary file
 func Dist() http.FileSystem {
-	fsys, err := fs.Sub(Static, "build2")
+	fsys, err := fs.Sub(Static, "build")
 	if err != nil {
 		panic(err)
 	}

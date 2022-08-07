@@ -13,12 +13,3 @@ func NewApp(repo *store.Queries) *App {
 		Repo: repo,
 	}
 }
-
-type CommonResponse struct {
-	Err error
-}
-
-func (r *CommonResponse) SetError(err error) *CommonResponse {
-	r.Err = err
-	return r
-}
