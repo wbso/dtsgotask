@@ -3,12 +3,12 @@ package app
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/wbso/dtsgotask/store"
 )
 
-// Update a task by id
 type UpdateTaskRequest struct {
 	Detail   string `json:"detail"`
 	Assignee string `json:"assignee"`
@@ -34,7 +34,7 @@ func (app *App) UpdateTask(ctx context.Context, id uuid.UUID, input UpdateTaskRe
 	}
 	deadline, err := parseYMDToTime(input.Deadline)
 	if err != nil {
-		return Task{}, err
+		return Task{}, errors.New("invalid date format")
 	}
 	task, err := app.Repo.UpdateTask(ctx, store.UpdateTaskParams{
 		ID:       id,
@@ -43,7 +43,7 @@ func (app *App) UpdateTask(ctx context.Context, id uuid.UUID, input UpdateTaskRe
 		Deadline: deadline,
 	})
 	if err != nil {
-		return Task{}, err
+		return Task{}, fmt.Errorf("failed to update task: %w", err)
 	}
 	return Task(task), nil
 }

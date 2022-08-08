@@ -15,17 +15,19 @@ import (
 )
 
 func run() error {
+	// Connect to the database
 	db, err := store.Connect(context.Background(), os.Getenv("DATABASE_DSN"))
 	if err != nil {
 		return err
 	}
 	defer db.Close()
 
+	// initialize repository
 	repo := store.New(db)
-	app := app.NewApp(repo)
-	restServer := restapi.Server{
-		App: app,
-	}
+	// initialize application
+	app := app.New(repo)
+	// initialize server
+	restServer := restapi.New(app)
 
 	srv := &http.Server{
 		Handler:           restServer.Router(),
@@ -39,14 +41,13 @@ func run() error {
 	log.Printf("starting server on port %s", os.Getenv("PORT"))
 	err = srv.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
-		return fmt.Errorf("error listen: %s", err)
+		return fmt.Errorf("error starting server: %s", err)
 	}
 	return nil
 }
 
 func main() {
 	godotenv.Load()
-	// logs set flags to log.LstdFlags | log.Lshortfile
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	err := run()
 	if err != nil {

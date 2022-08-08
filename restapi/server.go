@@ -7,3 +7,9 @@ import (
 type Server struct {
 	App *app.App
 }
+
+func New(app *app.App) *Server {
+	return &Server{
+		App: app,
+	}
+}

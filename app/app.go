@@ -8,7 +8,7 @@ type App struct {
 	Repo *store.Queries
 }
 
-func NewApp(repo *store.Queries) *App {
+func New(repo *store.Queries) *App {
 	return &App{
 		Repo: repo,
 	}

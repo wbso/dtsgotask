@@ -2,16 +2,31 @@ package main
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/joho/godotenv"
+	"github.com/wbso/dtsgotask/app"
 	"github.com/wbso/dtsgotask/store"
 )
 
 func run(db *pgxpool.Pool) error {
-	// TODO: implement
+	a := app.New(store.New(db))
+	task, err := a.CreateTask(context.Background(), app.CreateTaskRequest{
+		Detail:   "test",
+		Assignee: "test",
+		Deadline: "2020-01-01",
+	})
+	if err != nil {
+		return err
+	}
+
+	datastring, _ := json.Marshal(task)
+	fmt.Println("DATA:")
+	fmt.Println(string(datastring))
 	return nil
 }
 

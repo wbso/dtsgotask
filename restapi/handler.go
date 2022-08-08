@@ -23,11 +23,13 @@ func (s *Server) createTask(w http.ResponseWriter, r *http.Request) {
 		respondError(w, r, http.StatusBadRequest, err)
 		return
 	}
+
 	res, err := s.App.CreateTask(r.Context(), input)
 	if err != nil {
 		respondError(w, r, http.StatusBadRequest, err)
 		return
 	}
+
 	respondJson(w, r, http.StatusCreated, res)
 }
 
@@ -37,11 +39,13 @@ func (s *Server) getTaskByID(w http.ResponseWriter, r *http.Request) {
 		respondJson(w, r, http.StatusBadRequest, err)
 		return
 	}
+
 	res, err := s.App.GetTask(r.Context(), id)
 	if err != nil {
 		respondJson(w, r, http.StatusBadRequest, err)
 		return
 	}
+
 	respondJson(w, r, http.StatusOK, res)
 }
 
@@ -56,11 +60,13 @@ func (s *Server) updateTask(w http.ResponseWriter, r *http.Request) {
 		respondError(w, r, http.StatusBadRequest, err)
 		return
 	}
+
 	res, err := s.App.UpdateTask(r.Context(), id, input)
 	if err != nil {
 		respondError(w, r, http.StatusBadRequest, err)
 		return
 	}
+
 	respondJson(w, r, http.StatusOK, res)
 }
 
