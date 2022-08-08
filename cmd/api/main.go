@@ -16,6 +16,7 @@ import (
 
 func run() error {
 	// Connect to the database
+	log.Println("Connecting to the database...")
 	db, err := store.Connect(context.Background(), os.Getenv("DATABASE_DSN"))
 	if err != nil {
 		return err

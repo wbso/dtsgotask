@@ -3,6 +3,7 @@ package restapi
 import (
 	"net/http"
 	"path"
+	"strings"
 
 	"github.com/wbso/dtsgotask/frontend"
 )
@@ -11,6 +12,7 @@ import (
 type responseWrapper struct {
 	http.ResponseWriter
 	status int
+	path   string
 }
 
 func (wrp *responseWrapper) WriteHeader(status int) {
@@ -18,6 +20,15 @@ func (wrp *responseWrapper) WriteHeader(status int) {
 	if status != http.StatusOK {
 		wrp.status = status
 		return
+	}
+
+	if strings.HasSuffix(wrp.path, ".css") ||
+		strings.HasSuffix(wrp.path, ".js") ||
+		strings.HasSuffix(wrp.path, ".png") ||
+		strings.HasSuffix(wrp.path, ".jpg") ||
+		strings.HasSuffix(wrp.path, ".ico") ||
+		strings.HasSuffix(wrp.path, ".svg") {
+		wrp.ResponseWriter.Header().Set("Cache-Control", "public, max-age=7200")
 	}
 
 	wrp.ResponseWriter.WriteHeader(status)
@@ -28,6 +39,7 @@ func (wrp *responseWrapper) Write(b []byte) (int, error) {
 	if wrp.status != http.StatusOK {
 		return len(b), nil
 	}
+
 	return wrp.ResponseWriter.Write(b)
 }
 
@@ -41,15 +53,14 @@ func HandleEmbeddedIndexFile() http.HandlerFunc {
 		r.URL.Path = filePath
 
 		// serve the file, and write to the responseWrapper, so we can record the status code
-		writeWrapper := &responseWrapper{w, http.StatusOK}
+		writeWrapper := &responseWrapper{w, http.StatusOK, filePath}
 		fileServer.ServeHTTP(writeWrapper, r)
 
 		// If the requested file is not found, it serve the index.html.
 		if writeWrapper.status != http.StatusOK {
-			writeWrapper.status = http.StatusOK
-			writeWrapper.Header().Set("Content-Type", "text/html")
-			r.URL.Path = "/"
-			fileServer.ServeHTTP(writeWrapper, r)
+			w.Header().Set("Content-Type", "text/html")
+			r.URL.Path = path.Clean("/")
+			fileServer.ServeHTTP(w, r)
 		}
 	}
 }
