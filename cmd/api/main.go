@@ -19,6 +19,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 
 	repo := store.New(db)
 	app := app.NewApp(repo)
