@@ -1,26 +1,41 @@
 # Mini Project Golang DTS
 
-## How to use
-copy `.env.example` to `.env`
+![screenshot](screenshot.png)
 
-### Development Mode
-1. Run Backend Server
-    ```sh
-    make run
-    ```
+## Demo
 
-2. Run Frontend Server
-    ```sh
-    make run-frontend
-    ```
-
-### Build Application
-
-    ```sh
-    make build
-    ```
+[https://wbso.up.railway.app/](https://wbso.up.railway.app/)
 
 ## App Structure
+
 ```
-presentation --> (business/app) --> (repo/persistence)
+presentation layer (restapi package) --call-> app layer (app package) --call-> storage layer (store package)
 ```
+
+## Run In Development Mode
+
+1. copy `.env.example` to `.env`
+2. Run Go Code
+
+   ```sh
+   make run
+   ```
+
+3. Run Frontend Code
+   ```sh
+   make run-frontend
+   ```
+
+## Deploy
+
+### Deploy To Railway
+
+1. Set `PORT` and `DATABASE_DSN` env variables in railway dashboard
+2. Run `railway up`
+
+### Deploy To General Server
+
+1. Run `make build-frontend` to build frontend code
+2. Run `make build` to build go code.
+3. Upload go executable file and .env file to a directory on the server.
+4. Execute the file on the server
