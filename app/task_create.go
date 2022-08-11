@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"errors"
 
 	"github.com/google/uuid"
 	"github.com/wbso/dtsgotask/store"
@@ -17,13 +16,13 @@ type CreateTaskRequest struct {
 
 func (r *CreateTaskRequest) Validate() error {
 	if r.Detail == "" {
-		return errors.New("detail is required")
+		return InvalidInputError("detail is required")
 	}
 	if r.Assignee == "" {
-		return errors.New("assignee is required")
+		return InvalidInputError("assignee is required")
 	}
 	if r.Deadline == "" {
-		return errors.New("deadline is required")
+		return InvalidInputError("deadline is required")
 	}
 	return nil
 }

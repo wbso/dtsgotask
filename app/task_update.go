@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -17,13 +16,13 @@ type UpdateTaskRequest struct {
 
 func (r *UpdateTaskRequest) Validate() error {
 	if r.Detail == "" {
-		return errors.New("detail is required")
+		return InvalidInputError("detail is required")
 	}
 	if r.Assignee == "" {
-		return errors.New("assignee is required")
+		return InvalidInputError("assignee is required")
 	}
 	if r.Deadline == "" {
-		return errors.New("deadline is required")
+		return InvalidInputError("deadline is required")
 	}
 	return nil
 }
@@ -34,7 +33,7 @@ func (app *App) UpdateTask(ctx context.Context, id uuid.UUID, input UpdateTaskRe
 	}
 	deadline, err := parseYMDToTime(input.Deadline)
 	if err != nil {
-		return Task{}, errors.New("invalid date format")
+		return Task{}, InvalidInputError("invalid date format")
 	}
 	task, err := app.Repo.UpdateTask(ctx, store.UpdateTaskParams{
 		ID:       id,

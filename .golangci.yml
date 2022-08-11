@@ -1,0 +1,42 @@
+run:
+  skip-files:
+    - "cmd/cli/main.go"
+
+linters:
+  enable-all: true
+#  enable:
+#    - gocritic
+#    - gosec
+#    - staticcheck
+#    - gocyclo
+#    - nakedret
+#    - gochecknoglobals
+#    - gosimple
+#    - unconvert
+#    - gofumpt
+
+
+  disable:
+    - exhaustivestruct # deprecated replaced by exhaustruct
+    - exhaustruct #important
+    - gci
+    - godot
+    - godox
+    - golint # replaced by revive
+    - gomnd # magic number
+    - ifshort
+    - interfacer # deprecated
+    - lll
+    - maligned # deprecated replaced by fieldalignment
+    - nlreturn
+    - scopelint # deprecated replaced by exportloopref
+    - tagliatelle
+    - varnamelen
+    - wrapcheck # important
+    - wsl
+
+
+linters-settings:
+  gocritic:
+    disabled-checks:
+      - commentFormatting

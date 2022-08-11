@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -41,14 +42,14 @@ func run() error {
 
 	log.Printf("starting server on port %s", os.Getenv("PORT"))
 	err = srv.ListenAndServe()
-	if err != nil && err != http.ErrServerClosed {
-		return fmt.Errorf("error starting server: %s", err)
+	if err != nil && errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("error starting server: %w", err)
 	}
 	return nil
 }
 
 func main() {
-	godotenv.Load()
+	_ = godotenv.Load()
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	err := run()
 	if err != nil {

@@ -12,14 +12,16 @@ type response struct {
 }
 
 func respondError(w http.ResponseWriter, r *http.Request, status int, err error) {
-	respondJson(w, r, status, response{
+	respondJSON(w, r, status, response{
+		Data:    nil,
 		Error:   err.Error(),
 		Message: http.StatusText(status),
 	})
 }
 
-func respondJson(w http.ResponseWriter, r *http.Request, status int, payload interface{}) {
+func respondJSON(w http.ResponseWriter, _ *http.Request, status int, payload interface{}) {
 	res := response{
+		Error:   "",
 		Message: http.StatusText(status),
 		Data:    payload,
 	}

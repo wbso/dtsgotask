@@ -14,7 +14,7 @@ func (s *Server) listTasks(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	respondJson(w, r, http.StatusOK, res)
+	respondJSON(w, r, http.StatusOK, res)
 }
 
 func (s *Server) createTask(w http.ResponseWriter, r *http.Request) {
@@ -30,29 +30,29 @@ func (s *Server) createTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJson(w, r, http.StatusCreated, res)
+	respondJSON(w, r, http.StatusCreated, res)
 }
 
 func (s *Server) getTaskByID(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
-		respondJson(w, r, http.StatusBadRequest, err)
+		respondJSON(w, r, http.StatusBadRequest, err)
 		return
 	}
 
 	res, err := s.App.GetTask(r.Context(), id)
 	if err != nil {
-		respondJson(w, r, http.StatusBadRequest, err)
+		respondJSON(w, r, http.StatusBadRequest, err)
 		return
 	}
 
-	respondJson(w, r, http.StatusOK, res)
+	respondJSON(w, r, http.StatusOK, res)
 }
 
 func (s *Server) updateTask(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
-		respondError(w, r, http.StatusBadRequest, err)
+		respondError(w, r, http.StatusUnprocessableEntity, err)
 		return
 	}
 	var input app.UpdateTaskRequest
@@ -67,47 +67,47 @@ func (s *Server) updateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJson(w, r, http.StatusOK, res)
+	respondJSON(w, r, http.StatusOK, res)
 }
 
 func (s *Server) deleteTask(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
-		respondJson(w, r, http.StatusBadRequest, err)
+		respondJSON(w, r, http.StatusBadRequest, err)
 		return
 	}
 	res, err := s.App.DeleteTask(r.Context(), id)
 	if err != nil {
-		respondJson(w, r, http.StatusBadRequest, err)
+		respondJSON(w, r, http.StatusBadRequest, err)
 		return
 	}
-	respondJson(w, r, http.StatusOK, res)
+	respondJSON(w, r, http.StatusOK, res)
 }
 
 func (s *Server) setTaskDone(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
-		respondJson(w, r, http.StatusBadRequest, err)
+		respondJSON(w, r, http.StatusBadRequest, err)
 		return
 	}
 	res, err := s.App.SetTaskDone(r.Context(), id)
 	if err != nil {
-		respondJson(w, r, http.StatusBadRequest, err)
+		respondJSON(w, r, http.StatusBadRequest, err)
 		return
 	}
-	respondJson(w, r, http.StatusOK, res)
+	respondJSON(w, r, http.StatusOK, res)
 }
 
 func (s *Server) setTaskUndone(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
-		respondJson(w, r, http.StatusBadRequest, err)
+		respondJSON(w, r, http.StatusBadRequest, err)
 		return
 	}
 	res, err := s.App.SetTaskUndone(r.Context(), id)
 	if err != nil {
-		respondJson(w, r, http.StatusBadRequest, err)
+		respondJSON(w, r, http.StatusBadRequest, err)
 		return
 	}
-	respondJson(w, r, http.StatusOK, res)
+	respondJSON(w, r, http.StatusOK, res)
 }

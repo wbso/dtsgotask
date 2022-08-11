@@ -27,3 +27,9 @@ migrateup:
 migratefresh:
 	@migrate -database "${COCKROACHDB_DSN}" -path store/migrations -verbose down
 	@migrate -database "${COCKROACHDB_DSN}" -path store/migrations -verbose up
+
+
+lint:
+	go fmt ./...
+	go vet ./...
+	golangci-lint run

@@ -1,6 +1,7 @@
 package restapi
 
 import (
+	"fmt"
 	"net/http"
 	"path"
 	"strings"
@@ -40,7 +41,11 @@ func (wrp *responseWrapper) Write(b []byte) (int, error) {
 		return len(b), nil
 	}
 
-	return wrp.ResponseWriter.Write(b)
+	n, err := wrp.ResponseWriter.Write(b)
+	if err != nil {
+		return n, fmt.Errorf("failed to write response: %w", err)
+	}
+	return n, nil
 }
 
 // HandleEmbeddedIndexFile returns a handler that serves the frontend file from embedded filesystem.
